@@ -6,7 +6,7 @@ delta = 0.1;
 
 %% FEM parameters
 N = 12;
-TOL = 1e-6;
+TOL = 1e-3;
 max_nodes = 1e4;
 node_start = 12;
 lambda = 0.9;
@@ -25,17 +25,35 @@ if g(x) > abs(x)
 elseif g(x) < -abs(x)
     f = -abs(x);
 else
-    f = 10;
+    f = g(x);
 end
 end
 
 %% FEM functions
 
-disp('hejlashdalihsda')
+function u_h = fem_solver(x, u_a, u_b)
+A = stiffness_matrix(x);
+B = load_vector(x, @f, u_a, u_b);
+u_h = A\B; % solve system of equations
+end
+
+
 %% Main script
+
+% while sum(eta2) > TOL && length(x) < max_nodes
+
+% end
 
 A = stiffness_matrix(x)
 B = load_vector(x, @f, u_a, u_b)
 M = mass_matrix(x)
 
-hello = 1;
+u_h = fem_solver(x, u_a, u_b)
+Z = -M \ A*u_h
+
+eta2 = zeros(N,1);
+for i = 1:N
+    h = x(i+1) - x(i);
+    eta2(i) = 1;
+end
+

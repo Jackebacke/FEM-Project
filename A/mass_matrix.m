@@ -1,4 +1,4 @@
-function M = mass_matrix(x, u_a, u_b)
+function M = mass_matrix(x)
 % Returns the assembled mass matrix M.
 % Input is a vector x of node coords.
 %
@@ -11,9 +11,9 @@ for i = 1:N % loop over elements
     M(n,n) = M(n,n) + [1/3 1/6; 1/6 1/3]*h; % assemble element stiffness
 end
 % Set first and last row?
+
 % TODO: wtf är ska ändpunkterna  vara
-M(1,1) = 1;
-M(N+1,N+1) = 1;
+
 
 
 end
