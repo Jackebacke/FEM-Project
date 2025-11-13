@@ -31,7 +31,7 @@ end
 
 %% FEM functions
 
-
+disp('hejlashdalihsda')
 %% Main script
 
 A = stiffness_matrix(x)
