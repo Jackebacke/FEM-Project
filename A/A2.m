@@ -90,3 +90,5 @@ end
 A = stiffness_matrix(x)
 B = load_vector(x, 0, 0)
 M = mass_matrix(x)
+
+hello = 1;
