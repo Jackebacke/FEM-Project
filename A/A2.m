@@ -14,43 +14,46 @@ h = (b-a)/N; % initial mesh size
 x = a:h:b; % initial node coords
 
 %% Equation functions
+function y = f(x_vals)
+gx = 10 .* x_vals .* sin(7 * pi .* x_vals);
 
-function g = g(x)
-g = 10 .* x .* sin(7 * pi .* x);
-end
+y = zeros(size(x_vals));
+for idx = 1:length(x_vals)
+    x = x_vals(idx);
+    g = gx(idx);
 
-function f = f(x)
-if g(x) > abs(x)
-    f = abs(x);
-elseif g(x) < -abs(x)
-    f = -abs(x);
-else
-    f = g(x);
+    if g > abs(x)
+        y(idx) = abs(x);
+    elseif g < -abs(x)
+        y(idx) = -abs(x);
+    else
+        y(idx) = g;
+    end
 end
 end
 
 %% FEM functions
 
-function u_h = fem_solver(x, u_a, u_b)
-A = stiffness_matrix(x);
-B = load_vector(x, @f, u_a, u_b);
-u_h = A\B; % solve system of equations
-end
-
-
 %% Main script
+eta2 = ones(N,1); % Initialize error estimator
 
 % while sum(eta2) > TOL && length(x) < max_nodes
+A = stiffness_matrix(x);
+B = load_vector(x, @f, u_a, u_b);
+u_h = A\B; % solution
 
+M = mass_matrix(x)
+Zeta = -M \ A*u_h % Second derivative approximation at nodes
+
+eta2 = zeros(N,1);
+for i = 1:N
+    h = x(i+1) - x(i);
+    eta2(i) = h *1; %TODO: implement error estimator
+end
 % end
 
-A = stiffness_matrix(x)
-B = load_vector(x, @f, u_a, u_b)
-M = mass_matrix(x)
 
-u_h = fem_solver(x, u_a, u_b)
-Z = -M \ A*u_h
-
+%% Tror inte reesten behövs?
 
 %% Basfunktioner  (phi)
 function val = phi_i(x, i, xnodes)
@@ -59,24 +62,24 @@ function val = phi_i(x, i, xnodes)
 %
 % xnodes : vector of mesh nodes [x0, x1, ..., xN]
 
-    xi_minus = xnodes(i-1);
-    xi       = xnodes(i);
-    xi_plus  = xnodes(i+1);
-    h = xnodes(2) - xnodes(1);  % assumes uniform spacing
+xi_minus = xnodes(i-1);
+xi       = xnodes(i);
+xi_plus  = xnodes(i+1);
+h = xnodes(2) - xnodes(1);  % assumes uniform spacing
 
-    val = zeros(size(x));  % initialize output
+val = zeros(size(x));  % initialize output
 
-    % Left linear segment
-    left_mask = (x >= xi_minus) & (x <= xi);
-    val(left_mask) = (x(left_mask) - xi_minus) / h;
+% Left linear segment
+left_mask = (x >= xi_minus) & (x <= xi);
+val(left_mask) = (x(left_mask) - xi_minus) / h;
 
-    % Right linear segment
-    right_mask = (x >= xi) & (x <= xi_plus);
-    val(right_mask) = (xi_plus - x(right_mask)) / h;
+% Right linear segment
+right_mask = (x >= xi) & (x <= xi_plus);
+val(right_mask) = (xi_plus - x(right_mask)) / h;
 end
 %% Skapa vektor av basfunktionerna
 function Phi = basvec(x, xnodes)
-    % Define nodes
+% Define nodes
 N = 10;                     % number of nodes
 xnodes = linspace(0, 1, N); % nodes from 0 to 1
 
@@ -91,10 +94,10 @@ for i = 2:N-1               % exclude first and last if you use boundary conditi
     Phi(:, i) = phi_i(x, i, xnodes);
 end
 end
-x = linspace(0, 0.9, 10);
 
 
-Laplu_h = 
+
+Lapl_u_h = 3
 function I = trapz_integration(f, a, b, n)
 %TRAPZ_INTEGRATION  Numerical integration using the trapezoidal rule.
 %
@@ -113,17 +116,12 @@ g = @(x) 10 .* x .* sin(7 * pi .* x);
 
 % Define f(x) using elementwise and logical operations
 f = @(x) (g(x) > abs(x)) .* abs(x) + ...
-         (g(x) < -abs(x)) .* (-abs(x)) + ...
-         (g(x) <= abs(x) & g(x) >= -abs(x)) .* g(x);
+    (g(x) < -abs(x)) .* (-abs(x)) + ...
+    (g(x) <= abs(x) & g(x) >= -abs(x)) .* g(x);
 h = (b - a) / n;            % step size
 x = a:h:b;                  % grid points
-y = f(x) + ;                   % function values
+y = f(x) + 1;                   % function values
 I = (h/2) * (y(1) + 2*sum(y(2:end-1)) + y(end));  % trapezoidal formula
 end
 
-eta2 = zeros(N,1);
-for i = 1:N
-    h = x(i+1) - x(i);
-    eta2(i) = 1;
-end
 
