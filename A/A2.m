@@ -10,7 +10,6 @@ max_nodes = 1e4;
 nodes_start = 12;
 lambda = 0.9;
 
-
 %% Equation functions
 function y = f(x_vals)
 gx = 10 .* x_vals .* sin(7 * pi .* x_vals);
@@ -29,11 +28,6 @@ for idx = 1:length(x_vals)
     end
 end
 end
-
-%% FEM functions
-
-
-
 %% Main script
 
 % Initialize variables
@@ -47,7 +41,7 @@ while ETA(end) > TOL && length(x) < max_nodes
     N = length(x); % number of elements
 
     A = stiffness_matrix(x);
-    B = load_vector(x, @(x) (f(x)/delta), u_a, u_b); % FIXME: är f(x)/delta rätt? - tror de
+    B = load_vector(x, @(x) (f(x)/delta), u_a, u_b);
     u_h = A\B; % solution
 
     M = mass_matrix(x);
@@ -58,6 +52,7 @@ while ETA(end) > TOL && length(x) < max_nodes
     eta2 = zeros(N,1);
     for i = 1:N-1
         h = x(i+1) - x(i);
+        % eta2(i) = (h^3 / 2) * (abs(f(x(i)))^2 + abs(f(x(i+1)))^2); % no laplacian
         eta2(i) = (h^3 / 2) * (abs(f(x(i)) + delta * Zeta(i))^2 + abs(f(x(i+1)) + delta * Zeta(i+1))^2); % Trapezoidal rule
     end
 
@@ -75,13 +70,13 @@ while ETA(end) > TOL && length(x) < max_nodes
     end
     x = sort(x);
 
-    % Hantera om max_nodes nås
+    % Handle if max_nodes is reached
     if length(x) >= max_nodes
         display('Maximum number of nodes reached. Stopping refinement.');
         N = length(x); % number of elements
 
         A = stiffness_matrix(x);
-        B = load_vector(x, @(x) (f(x)/delta), u_a, u_b); % FIXME: är f(x)/delta rätt?
+        B = load_vector(x, @(x) (f(x)/delta), u_a, u_b);
         u_h = A\B; % solution
 
         M = mass_matrix(x);
@@ -100,6 +95,7 @@ while ETA(end) > TOL && length(x) < max_nodes
     ETA = [ETA sum(eta2)]; % Update error estimator history
     iteration = iteration + 1;
 end
+
 disp('---------------- Final solution computed. -----------------');
 disp(['Total iterations: ' num2str(iteration)]);
 disp(['Final number of nodes: ' num2str(NODES(end))]);
@@ -120,6 +116,9 @@ title('Second Derivative Approximation');
 
 
 figure();
+% Set figsize for better printing
+set(gcf, 'Position', [100, 100, 800, 1000]);
+% Subplots
 subplot(4,1,1);
 plot(x, u_h, '-o');
 xlabel('x');
@@ -135,8 +134,8 @@ title('Residual at nodes');
 subplot(4,1,3);
 plot(x, sqrt(eta2), '-o');
 xlabel('x');
-ylabel('Error indicator');
-title('Error estimator per element');
+ylabel('Element residual');
+title('Error indicator \eta_i per element');
 
 subplot(4,1,4);
 plot(x(2:end), 1./diff(x), '-o');
@@ -148,9 +147,20 @@ figure();
 loglog(NODES, ETA, 'or-');
 hold on;
 loglog(NODES, NODES.^-1, 'ob-');
+
+% Compute convergence rate of ETA
+logN = log(NODES(2:end));  % skip initial point
+logETA = log(ETA(2:end));
+p = polyfit(logN, logETA, 1);  % linear fit
+rate = p(1);  % convergence rate
+const = exp(p(2));
+fprintf('Estimated convergence rate of ETA: ETA ~ {%.3f} * N^{%.3f})\n', const, rate);
+% Add fitted line to plot
+loglog(NODES, const * NODES.^rate, '--k', 'LineWidth', 1.5);
+
+legend('\eta', 'N^{-1} reference', sprintf('Fit: {%.2e} \\cdot N^{%.2f}', const, rate));
 xlabel('Number of nodes');
-ylabel('Error indicator');
-legend('\eta', 'N^{-1}');
-title('Error indicator vs. Number of nodes');
+ylabel('Sum of error indicators');
+title('Sum of error indicators vs. Number of nodes');
 
 

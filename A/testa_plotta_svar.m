@@ -1,3 +1,4 @@
+clear; clc; close all;
 %% Equation parameters
 a = -1; b = 1; % end points of interval
 u_a = 0; u_b = 0; % boundary value at x=a and x=b
@@ -44,7 +45,7 @@ figure();
 plot(x, u_h, '-o');
 hold on;
 plot(x, Zeta, '-x');
-plot(x, f(x) / delta, '-s');
+plot(x, f(x), '-s');
 xlabel('x');
 ylabel('u_h(x), Zeta(x), f(x)');
 title('FEM Solution u_h(x), Zeta(x)');
