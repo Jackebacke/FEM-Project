@@ -52,8 +52,8 @@ while ETA(end) > TOL && length(x) < max_nodes
     eta2 = zeros(N,1);
     for i = 1:N-1
         h = x(i+1) - x(i);
-        % eta2(i) = (h^3 / 2) * (abs(f(x(i)))^2 + abs(f(x(i+1)))^2); % no laplacian
-        eta2(i) = (h^3 / 2) * (abs(f(x(i)) + delta * Zeta(i))^2 + abs(f(x(i+1)) + delta * Zeta(i+1))^2); % Trapezoidal rule
+        eta2(i) = (h^3 / 2) * (abs(f(x(i)))^2 + abs(f(x(i+1)))^2); % no laplacian
+        % eta2(i) = (h^3 / 2) * (abs(f(x(i)) + delta * Zeta(i))^2 + abs(f(x(i+1)) + delta * Zeta(i+1))^2); % Trapezoidal rule
     end
 
 
