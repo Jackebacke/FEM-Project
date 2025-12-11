@@ -1,4 +1,4 @@
-function b = assemble(p,e,t,f)
+function b = assembleb(p,e,t,f)
 
 N = size(p,2);
 b = zeros(N,1);
