@@ -12,7 +12,14 @@ function x = fixedPointIteration(F, x0, tol, maxIter)
 x = x0;
 for iter = 1:maxIter
     x_new = F(x);
-    if norm(x_new - x, 2) < tol
+
+    % Convert to full if sparse for norm calculation
+    diff = x_new - x;
+    if issparse(diff)
+        diff = full(diff);
+    end
+
+    if norm(diff, 2) < tol
         fprintf('Converged in %d iterations.\n', iter);
         x = x_new;
         return;
