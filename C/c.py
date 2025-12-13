@@ -68,9 +68,30 @@ file = File("C/Solutions/solution.pvd")
 # Set initial condition
 u_old.assign(u0)
 
+# Open CSV file for population data
+csv_file = open("C/Solutions/populations.csv", "w")
+csv_file.write("time,population_u,population_v,population_w\n")
+
 # Time - stepping
 while t < T:
+    # Define the integrals
+    M0 = u_old[0] * dx
+    M1 = u_old[1] * dx
+    M2 = u_old[2] * dx
+    # compute the functional
+    population_u = assemble ( M0 )
+    population_v = assemble ( M1 )
+    population_w = assemble ( M2 )
+    
+    # Write to CSV
+    csv_file.write(f"{t},{population_u},{population_v},{population_w}\n")
+    
+    if int(t) % 100 == 0:
+        print("Time : ", t)
+        file << u_old
+
     solve(a == L, u_new)
     u_old.assign(u_new)
     t += dt
-    file << u_old
+
+csv_file.close()
