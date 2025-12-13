@@ -25,11 +25,12 @@ m = 0.12
 # Class representing the intial conditions
 class InitialConditions ( UserExpression):
     def eval(self, values , x) :
-        values [ 0 ] = ...
-        values [ 1 ] = ...
-        values [ 2 ] = ...
+        values [ 0 ] = 0
+        values [ 1 ] = 4/15 - 2*10^{-7}*(x(0)-0.1*x(1)-350)((x(0)-0.1*x(1)-350))
+        values [ 2 ] = 22/45 -3*10^{-5}(x(0)-450)-1.2*10^{-4}(x(1)-15)
     def value_shape(self) :
         return (3 ,)
+
 
 # Define initial condition
 indata = InitialConditions(degree = 2)
