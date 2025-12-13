@@ -1,5 +1,6 @@
+from fileinput import filename
+import os
 from dolfin import *
-from numpy import dtype
 
 # Create mesh and define function space
 mesh = Mesh("C/meshes/circle.xml.gz")
@@ -10,7 +11,7 @@ TH = P1 * P1 * P1
 W = FunctionSpace(mesh , TH)
 
 # Define parameters :
-T = 500
+T = 1000
 dt = 0.5
 t = 0
 delta1 = 1
@@ -27,8 +28,9 @@ m = 0.12
 # Class representing the intial conditions
 class InitialConditions(UserExpression):
     def eval(self, values , x) :
-        values[0] = 0
         values[1] = 4/15 - 2*10**(-7)*(x[0]-0.1*x[1]-350)**2
+        values[0] = 0 # Part C1a)
+        # values[0] = 0.1 * values[1] # Part C1b)
         values[2] = 22/45 - 3*10**(-5) * (x[0]-450) - 1.2*10**(-4) * (x[1]-15)
     def value_shape(self) :
         return (3 ,)
@@ -56,37 +58,38 @@ u = TrialFunction(W)
 D = as_matrix([[delta1 , 0 , 0] ,
                    [0 , delta2 , 0] ,
                    [0 , 0 , delta3]])
-
 # Bilinear form: crank nicolson
 F = inner((u - u_old)/dt, psi)*dx + inner(N(u_old), psi)*dx +inner(D*grad((u+u_old)/2), grad(psi))*dx
 a = lhs(F)
 L = rhs(F)
 
-# Set an output file
-file = File("C/Solutions/solution.pvd")
+# Define integral forms once
+M0 = u_old[0] * dx
+M1 = u_old[1] * dx
+M2 = u_old[2] * dx
+
+# Output files
+path = "C/Solutions/c1a"
+file_name = "c1a"
+file = File(os.path.join(path, f"{file_name}.pvd"))
+# Open CSV file for population data
+csv_file = open(os.path.join(path, f"{file_name}_population.csv"), "w")
+csv_file.write("time,population_u,population_v,population_w\n")
+
 
 # Set initial condition
 u_old.assign(u0)
-
-# Open CSV file for population data
-csv_file = open("C/Solutions/populations.csv", "w")
-csv_file.write("time,population_u,population_v,population_w\n")
-
 # Time - stepping
 while t < T:
-    # Define the integrals
-    M0 = u_old[0] * dx
-    M1 = u_old[1] * dx
-    M2 = u_old[2] * dx
-    # compute the functional
-    population_u = assemble ( M0 )
-    population_v = assemble ( M1 )
-    population_w = assemble ( M2 )
+    # compute the functional (u_old changes each iteration)
+    population_u = assemble(M0)
+    population_v = assemble(M1)
+    population_w = assemble(M2)
     
     # Write to CSV
     csv_file.write(f"{t},{population_u},{population_v},{population_w}\n")
     
-    if int(t) % 100 == 0:
+    if t % 100 == 0:  # Save when t crosses multiples of 100
         print("Time : ", t)
         file << u_old
 
@@ -94,4 +97,15 @@ while t < T:
     u_old.assign(u_new)
     t += dt
 
+# compute the functional at final time step
+population_u = assemble(M0)
+population_v = assemble(M1)
+population_w = assemble(M2)
+# Write to CSV final time step
+csv_file.write(f"{t},{population_u},{population_v},{population_w}\n")
+
 csv_file.close()
+
+# Save final solution
+print(f"Final time: {t}")
+file << u_old
