@@ -56,9 +56,13 @@ a = dot(u, psi)*dx + dot(N(u), psi)*dx + inner(D*grad(u), grad(psi))*dx
 L = 0
 
 # Set an output file
-file = File("solution.pvd")
-file << u
+file = File("C/Solutions/solution.pvd")
 
+# Compute solution
+solve(a == L, u,
+    solver_parameters={"newton_solver": {"relative_tolerance": 1e-6}})
+
+file << u
 # # Set initial condition
 # ...
 
