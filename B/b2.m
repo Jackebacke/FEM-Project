@@ -20,6 +20,18 @@ function s = nonlin_S(u, alpha)
 s = -u .* (1 - u) + u ./ (alpha + u);
 end
 
+function pr = population(u, p, t)
+    pr = 0;
+    for K = 1:size(t,2)
+        nodes = t(1:3,K);
+        x = p(1,nodes);
+        y = p(2,nodes);
+        area = polyarea(x,y);
+        u_avg = mean(u(nodes));
+        pr = pr + u_avg * area;
+    end
+end
+
 %% Solve B2
 
 % Mesh and assemble matrices
@@ -30,10 +42,11 @@ hmax = 1/40;
 
 
 % Population count 
-Population_Rate = zeros(size(tvec));
+Pop = zeros(size(tvec));
 % Solve over time with crank-nicolson + fixed-point
 u = initial_condition(p(1,:), p(2,:))'; 
-for time = tvec(2:end)
+Population_Rate(1) = pop_rate(u, p, t);
+for time = tvec
     % % fixed-point iteration function handle
 
     F = @(u_next) ((M/dt + (d1/2)*A)) \ (((M/dt - (d1/2)*A))*u - M * nonlin_S((u_next + u)/2, alpha));
@@ -45,6 +58,7 @@ for time = tvec(2:end)
     end
 
     u = u_next; % Update for next time step
+    Population_Rate(find(tvec == time)) = pop_rate(u, p, t);
 end
 %% Plot solution
 function plotPDE(p,e,t,u,time)
@@ -54,6 +68,14 @@ title('Solution \psi at t = ' + string(time));
 xlabel('x');
 ylabel('y');
 zlabel('\psi');
-axis equal;
 colorbar;
 end
+
+%% Plot population rate over time
+figure;
+plot(tvec, Population_Rate, '-o');
+title('Population Rate over Time');
+xlabel('Time');
+ylabel('Population Rate');
+grid on;
+
