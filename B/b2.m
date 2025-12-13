@@ -45,7 +45,7 @@ hmax = 1/40;
 Pop = zeros(size(tvec));
 % Solve over time with crank-nicolson + fixed-point
 u = initial_condition(p(1,:), p(2,:))'; 
-Population_Rate(1) = pop_rate(u, p, t);
+Pop(1) = population(u, p, t);
 for time = tvec
     % % fixed-point iteration function handle
 
@@ -58,7 +58,7 @@ for time = tvec
     end
 
     u = u_next; % Update for next time step
-    Population_Rate(find(tvec == time)) = pop_rate(u, p, t);
+    Pop(find(tvec == time)) = population(u, p, t);
 end
 %% Plot solution
 function plotPDE(p,e,t,u,time)
@@ -73,9 +73,9 @@ end
 
 %% Plot population rate over time
 figure;
-plot(tvec, Population_Rate, '-o');
-title('Population Rate over Time');
+plot(tvec, Pop, '-o');
+title('Population over Time');
 xlabel('Time');
-ylabel('Population Rate');
+ylabel('Population');
 grid on;
 
