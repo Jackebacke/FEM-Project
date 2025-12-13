@@ -59,11 +59,12 @@ L = 0
 file = File("C/Solutions/solution.pvd")
 
 # Set initial condition
-
+u.assign(u0)
+file << u
 
 # # Time - stepping
 # while t < T :
 #     # assign u0
 #     u0.assign(u)
-#     ...
+#     # solve the variational problem
 #     ...
