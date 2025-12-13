@@ -58,13 +58,8 @@ L = 0
 # Set an output file
 file = File("C/Solutions/solution.pvd")
 
-# Compute solution
-solve(a == L, u,
-    solver_parameters={"newton_solver": {"relative_tolerance": 1e-6}})
+# Set initial condition
 
-file << u
-# # Set initial condition
-# ...
 
 # # Time - stepping
 # while t < T :
