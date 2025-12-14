@@ -2,8 +2,8 @@ from dolfin import *
 from numpy import dtype
 
 # Create mesh and define function space
-mesh = Mesh("C/meshes/sweden_coarse.xml.gz")
-mesh = Mesh("C/meshes/sweden_coarse.xml.gz")
+mesh = Mesh("C/meshes/sweden.xml.gz")
+mesh = Mesh("C/meshes/sweden.xml.gz")
 import numpy as np
 
 coords = mesh.coordinates()
