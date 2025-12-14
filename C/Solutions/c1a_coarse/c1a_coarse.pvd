@@ -1,0 +1,16 @@
+<?xml version="1.0"?>
+<VTKFile type="Collection" version="0.1">
+  <Collection>
+    <DataSet timestep="0" part="0" file="c1a_coarse000000.vtu" />
+    <DataSet timestep="1" part="0" file="c1a_coarse000001.vtu" />
+    <DataSet timestep="2" part="0" file="c1a_coarse000002.vtu" />
+    <DataSet timestep="3" part="0" file="c1a_coarse000003.vtu" />
+    <DataSet timestep="4" part="0" file="c1a_coarse000004.vtu" />
+    <DataSet timestep="5" part="0" file="c1a_coarse000005.vtu" />
+    <DataSet timestep="6" part="0" file="c1a_coarse000006.vtu" />
+    <DataSet timestep="7" part="0" file="c1a_coarse000007.vtu" />
+    <DataSet timestep="8" part="0" file="c1a_coarse000008.vtu" />
+    <DataSet timestep="9" part="0" file="c1a_coarse000009.vtu" />
+    <DataSet timestep="10" part="0" file="c1a_coarse000010.vtu" />
+  </Collection>
+</VTKFile>

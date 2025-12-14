@@ -1,9 +1,9 @@
-from fileinput import filename
 import os
 from dolfin import *
+set_log_level(LogLevel.WARNING)
 
 # Create mesh and define function space
-mesh = Mesh("C/meshes/circle.xml.gz")
+mesh = Mesh("C/meshes/circle_coarse.xml.gz")
 
 # Construct the finite element space
 P1 = FiniteElement("Lagrange", mesh.ufl_cell() , 1)
@@ -69,8 +69,8 @@ M1 = u_old[1] * dx
 M2 = u_old[2] * dx
 
 # Output files
-path = "C/Solutions/c1a"
-file_name = "c1a"
+path = "C/Solutions/c1a_coarse"
+file_name = "c1a_coarse"
 file = File(os.path.join(path, f"{file_name}.pvd"))
 # Open CSV file for population data
 csv_file = open(os.path.join(path, f"{file_name}_population.csv"), "w")
@@ -81,6 +81,7 @@ csv_file.write("time,population_u,population_v,population_w\n")
 u_old.assign(u0)
 # Time - stepping
 while t < T:
+    print("Current time: ", t, end='\r')
     # compute the functional (u_old changes each iteration)
     population_u = assemble(M0)
     population_v = assemble(M1)
@@ -90,7 +91,7 @@ while t < T:
     csv_file.write(f"{t},{population_u},{population_v},{population_w}\n")
     
     if t % 100 == 0:  # Save when t crosses multiples of 100
-        print("Time : ", t)
+        print("Saving solution at time: ", t)
         file << u_old
 
     solve(a == L, u_new)
