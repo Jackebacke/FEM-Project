@@ -10,7 +10,7 @@ u_exact = @(x,y) sin(2.*pi.*x) .* sin(2.*pi.*y);
 
 
 
-H_MAX = 1./(2.^(1:0.05:5));
+H_MAX = 1./(2.^(1:1:5));
 errors = zeros(size(H_MAX));
 for hmax = H_MAX
     % Mesh
@@ -80,4 +80,4 @@ ylabel('Energy norm of error');
 legend('show', 'Location', 'best');
 title('Error vs. Mesh Size');
 grid on;
-savefig_report('convergence.pdf', './Project/B/Figures', 'Width', 7, 'Height', 9);
+savefig_report('convergence_2.pdf', './Project/B/Figures', 'Width', 7, 'Height', 9);
