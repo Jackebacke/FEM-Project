@@ -3,29 +3,9 @@ set_log_level(LogLevel.WARNING)
 
 # Create mesh and define function space
 mesh = Mesh("C/meshes/sweden_coarse.xml.gz")
+mesh = Mesh("C/meshes/sweden_coarse.xml.gz")
+import numpy as np
 
-# Construct the finite element space
-P1 = FiniteElement("Lagrange", mesh.ufl_cell() , 1)
-TH = P1 * P1 * P1
-W = FunctionSpace(mesh , TH)
-
-# Define parameters :
-T = 500
-dt = 0.5
-t = 0
-delta1 = 1
-delta2 = 1
-delta3 = 1
-alpha = 0.4
-beta = 0.8
-gamma = 0.8
-zeta = 2
-L_0 = 0.4
-l = 0.6
-m = 0.12
-
-# Class representing the intial conditions
-# Find sundsvall coordinates
 coords = mesh.coordinates()
 xmin = coords[:, 0].min()
 xmax = coords[:, 0].max()

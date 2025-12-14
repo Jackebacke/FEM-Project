@@ -34,7 +34,6 @@ set(get(gca, 'YLabel'), 'FontWeight', 'bold');
 set(get(gca, 'ZLabel'), 'FontWeight', 'bold');
 set(get(gca, 'Title'), 'FontWeight', 'bold', 'FontSize', 18);
 
-
 % Thicken plot lines
 h = findobj(gca, 'Type', 'line');
 set(h, 'LineWidth', 2);
