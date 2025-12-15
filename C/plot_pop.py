@@ -4,9 +4,9 @@ import os
 #print(os.getcwd())
 # Read the CSV file
 #
-data = "c1a"
+data = "sverige"
 data_folder = os.path.join(os.path.dirname(__file__), "Solutions", data)
-df = pd.read_csv(os.path.join(data_folder, f"{data}_population.csv"))
+df = pd.read_csv(os.path.join(data_folder, f"{data}_populations.csv"))
 
 # Plot populations vs time
 plt.figure()
