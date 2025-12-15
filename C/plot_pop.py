@@ -6,7 +6,7 @@ import os
 #
 data = "sverige"
 data_folder = os.path.join(os.path.dirname(__file__), "Solutions", data)
-df = pd.read_csv(os.path.join(data_folder, f"{data}_populations.csv"))
+df = pd.read_csv(os.path.join(data_folder, f"{data}_population.csv"))
 
 # Plot populations vs time
 plt.figure()
@@ -17,7 +17,7 @@ plt.plot(df["time"], df["population_w"], label="population_w")
 # Labels and legend
 plt.xlabel("Time")
 plt.ylabel("Population")
-plt.title("Populations vs Time, u0 = 0")
+plt.title("Populations vs Time")
 plt.legend()
 plt.grid(True)
 
